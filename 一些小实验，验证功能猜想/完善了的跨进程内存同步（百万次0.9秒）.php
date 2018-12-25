@@ -6,6 +6,11 @@
  * 任何人使用时请保留该声明
  * 这个测试算是基本完善了，可以做些复杂一点儿的开发了。
  * 下一个测试将给予这个模式
+ * 关于性能，在关闭了交互输出后，百万次运行的速度为
+ * real    0m0.883s
+ * user    0m0.861s
+ * sys     0m0.021s
+ * 没有跟C、JAVA比较，不过自我感觉基本够用了
  */
 
 class getset implements SplObserver, SplSubject {
@@ -46,7 +51,7 @@ class getset implements SplObserver, SplSubject {
 
     public function update(SplSubject $subject) {
         $this->test = $subject->test;
-        echo "我是儿子, 我爹有", $this->test, "元钱!\n";
+        //echo "我是儿子, 我爹有", $this->test, "元钱!\n";
     }
 
     public function attach(\SplObserver $observer): void {
@@ -70,7 +75,7 @@ class getset implements SplObserver, SplSubject {
 $test = new getset();
 $test1 = new getset();
 $test->attach($test1);
-$i = 100000;
+$i = 1000000;
 
 $pid = pcntl_fork();
 //父进程和子进程都会执行下面代码
@@ -82,7 +87,7 @@ if ($pid == -1) {
     echo "fpid = $pid\n";
     while ($i--) {
         $test->test = mt_rand(1, 10000);
-        echo "我是你爹, 我有", $test->test, "元钱!\n";
+        //echo "我是你爹, 我有", $test->test, "元钱!\n";
     }
 
     if (isset($test->fp) && $test->fp) {
